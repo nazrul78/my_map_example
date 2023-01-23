@@ -1,0 +1,77 @@
+name: my_map_example
+description: A new Flutter project.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.18.2 <3.0.0'
+
+
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: 
+  get:
+  dio:
+  path_provider:
+  path_provider_android:
+  hive:
+  hive_flutter:
+  intl:
+  json_annotation:
+  flutter_dotenv:
+  flutter_svg:
+  eva_icons_flutter:
+  image_picker:
+  uuid:
+  syncfusion_flutter_charts: ^20.2.46
+  flutter_map: ^3.0.0
+  latlong2:
+  #location: ^5.0.0-dev.8
+  location: ^4.4.0
+  dotted_line: ^3.1.0
+  dotted_border: ^2.0.0+2
+  smooth_page_indicator:
+  just_the_tooltip: ^0.0.12
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints:
+  build_runner:
+  json_serializable:
+  hive_generator:
+
+
+flutter:
+
+  uses-material-design: true
+
+  assets:
+    - assets/img/
+    - assets/svg/
+    - .env
+
+  fonts:
+    - family: Manrope Regular
+      fonts:
+        - asset: fonts/manrope-regular.otf
+
+
+    - family: Manrope Bold
+      fonts:
+        - asset: fonts/manrope-bold.otf
+
+
+    - family: Manrope Medium
+      fonts:
+        - asset: fonts/manrope-medium.otf
+
+        
+    - family: Manrope Thin
+      fonts:
+        - asset: fonts/manrope-thin.otf
