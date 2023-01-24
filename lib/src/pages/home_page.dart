@@ -20,7 +20,11 @@ class HomePage extends StatelessWidget with Base {
           options: MapOptions(
             absorbPanEventsOnScrollables: false,
             onTap: (tapPosition, point) {
-              homePageC.addPolylinePoint(point);
+              if (homePageC.isDrawPolylineEnable.value) {
+                homePageC.addPolylinePoint(point);
+              } else if (homePageC.isDrawPolygoneEnable.value) {
+                homePageC.addPolygonPoint(point);
+              }
             },
             onLongPress: (tapPosition, point) {
               homePageC.addPolygonPoint(point);
@@ -57,7 +61,7 @@ class HomePage extends StatelessWidget with Base {
                         ),
                         child: GestureDetector(
                           onTap: () {
-                            homePageC.isCurrentLocationEnable.toggle();
+                            // homePageC.isCurrentLocationEnable.toggle();
                             homePageC.showCurrentLocationOnMap(
                                 cameraMove: true);
                           },
@@ -80,8 +84,9 @@ class HomePage extends StatelessWidget with Base {
                       ),
                     ),
                     // ============== Used to draw a polyline on map ===========
+
                     Padding(
-                      padding: EdgeInsets.only(top: 20),
+                      padding: EdgeInsets.only(top: 16),
                       child: JustTheTooltip(
                         tailLength: 12.0,
                         offset: 5,
@@ -99,34 +104,31 @@ class HomePage extends StatelessWidget with Base {
                           ),
                         ),
                         child: GestureDetector(
-                          onTap: () {
-                            homePageC.clearPolylines();
-                          },
+                          onTap: (() {
+                            // homePageC.clearPolylines();
+                            homePageC.isDrawPolylineEnable.toggle();
+                            homePageC.polylineDrawStart();
+                          }),
                           child: Container(
-                            // width: 32,
-                            // height: 30,
-                            decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15)),
-                              color: Colors.grey[100],
-                              // color: homePageC.isCurrentLocationEnable.value
-                              //     ? hexToColor('#6EA178')
-                              //     : hexToColor('#95C08B'),
-                            ),
-                            child: Icon(
-                              Icons.polyline,
-                              size: 30,
-                            ),
-                            // child: RenderSvg(
-                            //   path: 'my_present_position',
-                            //   width: 40,
-                            // ),
-                          ),
+                              width: 32,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5)),
+                                color: homePageC.isDrawPolylineEnable.value
+                                    ? Colors.black
+                                    : Colors.grey,
+                              ),
+                              child: Icon(
+                                Icons.polyline,
+                                color: Colors.white,
+                              )),
                         ),
                       ),
                     ),
 
                     // ============== Used to draw a polygon on map ===========
+
                     Padding(
                       padding: EdgeInsets.only(top: 20),
                       child: JustTheTooltip(
@@ -146,29 +148,23 @@ class HomePage extends StatelessWidget with Base {
                           ),
                         ),
                         child: GestureDetector(
-                          onTap: () {
-                            homePageC.clearPolygons();
-                          },
+                          onTap: (() {
+                            homePageC.isDrawPolygoneEnable.toggle();
+                          }),
                           child: Container(
-                            // width: 32,
-                            // height: 30,
-                            decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15)),
-                              color: Colors.grey[100],
-                              // color: homePageC.isCurrentLocationEnable.value
-                              //     ? hexToColor('#6EA178')
-                              //     : hexToColor('#95C08B'),
-                            ),
-                            child: Icon(
-                              Icons.circle_outlined,
-                              size: 30,
-                            ),
-                            // child: RenderSvg(
-                            //   path: 'my_present_position',
-                            //   width: 40,
-                            // ),
-                          ),
+                              width: 32,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5)),
+                                color: homePageC.isDrawPolygoneEnable.value
+                                    ? Colors.black
+                                    : Colors.grey,
+                              ),
+                              child: Icon(
+                                Icons.square_outlined,
+                                color: Colors.white,
+                              )),
                         ),
                       ),
                     ),
@@ -219,6 +215,50 @@ class HomePage extends StatelessWidget with Base {
                         ),
                       ),
                     ),
+
+                    Padding(
+                      padding: EdgeInsets.only(top: 20),
+                      child: JustTheTooltip(
+                        tailLength: 12.0,
+                        offset: 5,
+                        preferredDirection: AxisDirection.left,
+                        content: Padding(
+                          padding: EdgeInsets.all(5.0),
+                          child: Text(
+                            'Clear all data',
+                            style: TextStyle(
+                              fontFamily: 'Manrope Regular',
+                              fontSize: 14.0,
+                              color: hexToColor('#434969'),
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ),
+                        child: GestureDetector(
+                          onTap: (() {
+                            homePageC.clearAllDataFromMap();
+                          }),
+                          child: Container(
+                              width: 32,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5)),
+
+                                color: Colors.grey,
+                                // color: homeMapViewC
+                                //         .isSelectMapTypeEnable
+                                //         .value
+                                //     ? hexToColor('#6EA178')
+                                //     : hexToColor('#95C08B'),
+                              ),
+                              child: Icon(
+                                Icons.clear,
+                                color: Colors.white,
+                              )),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -259,6 +299,46 @@ class HomePage extends StatelessWidget with Base {
                 ),
               ],
             ),
+
+            PolylineLayer(
+              polylineCulling: true,
+              polylines: homePageC.polylines,
+              // polylines: homePageC.polylineList,
+            ),
+
+            // PolylineLayer(
+            //   polylineCulling: true,
+            //   polylines: [
+            //     Polyline(
+            //       points: [
+            //         LatLng(23.633229395435163, 90.41131542577997),
+            //         LatLng(23.963229395435163, 90.51131542577997),
+            //       ],
+            //       strokeWidth: 5,
+            //       // isDotted: true,
+            //       color: Colors.redAccent,
+
+            //       // onTap: () {
+            //       //   log('Pressed>>>>>>>>>>>>>>>>>>>>>>>>>>>>>..');
+            //       // },
+            //       // borderStrokeWidth: 10,
+            //     ),
+            //     Polyline(
+            //       points: [
+            //         LatLng(23.773229395435163, 90.41131542577997),
+            //         LatLng(23.873229395435163, 90.51131542577997),
+            //       ],
+            //       strokeWidth: 5,
+            //       // isDotted: true,
+            //       color: Colors.redAccent,
+
+            //       // onTap: () {
+            //       //   log('Pressed>>>>>>>>>>>>>>>>>>>>>>>>>>>>>..');
+            //       // },
+            //       // borderStrokeWidth: 10,
+            //     ),
+            //   ],
+            // ),
 
             PolygonLayer(
               polygonCulling: true,
